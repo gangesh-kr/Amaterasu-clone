@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: auto; /* Lenis handles smooth scrolling */
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #000;
+  color: #fff;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Typography Utilities ===== */
+.font-light {
+  font-weight: 300;
+}
+
+.font-regular {
+  font-weight: 400;
+}
+
+/* ===== Custom scrollbar (subtle) ===== */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+/* ===== Canvas fill utility ===== */
+.canvas-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== CTA Button ===== */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0px;
+  background: linear-gradient(90deg, #4B3FC3 0%, #5B4EE8 100%);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 32px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 300ms ease, box-shadow 300ms ease;
+  will-change: transform;
+}
+
+.cta-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 20px rgba(91,78,232,0.5);
+}
+
+.cta-btn:active {
+  transform: scale(0.98);
+}
+
+/* ===== Chevron button ===== */
+.chevron-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 300ms ease, transform 300ms ease;
+}
+
+.chevron-btn:hover {
+  border-color: rgba(255, 255, 255, 0.9);
+  transform: translateY(3px);
+}
+
+/* ===== Ambient dot ===== */
+.ambient-dot {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: rgba(75, 63, 195, 0.5);
+  color: #fff;
+}
