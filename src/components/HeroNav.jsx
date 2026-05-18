@@ -1,92 +1,199 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 /**
- * HeroNav — Top navigation bar with centered logo and right-aligned links/menu.
+ * HeroNav — Global fixed top navigation bar with scroll tracker and menu toggle.
+ * Adapts its color (white/indigo-blue) dynamically based on active background theme.
  */
 export default function HeroNav({ style }) {
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const [theme, setTheme] = useState('dark') // 'light' (indigo-blue) or 'dark' (white)
+
+  // 1. Independent and bulletproof scroll progress calculation
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY || window.pageYOffset
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
+      const progress = maxScroll > 0 ? scrollY / maxScroll : 0
+      setScrollProgress(progress)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    handleScroll() // Initial run
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // 2. Navigation theme color switching based on scroll position
+  useEffect(() => {
+    const handleTheme = () => {
+      try {
+        const checkY = 50
+        let isLight = false
+
+        const visionSec = document.getElementById('vision-section')
+        if (visionSec) {
+          const rect = visionSec.getBoundingClientRect()
+          if (rect.top <= checkY && rect.bottom >= checkY) {
+            isLight = true
+          }
+        }
+
+        const natureSec = document.getElementById('nature-section')
+        if (natureSec) {
+          const rect = natureSec.getBoundingClientRect()
+          if (rect.top <= checkY && rect.bottom >= checkY) {
+            const overlay = document.getElementById('nature-overlay-bg')
+            if (overlay) {
+              const opacity = parseFloat(window.getComputedStyle(overlay).opacity || '0')
+              if (opacity < 0.5) {
+                isLight = true
+              }
+            } else {
+              isLight = true
+            }
+          }
+        }
+
+        setTheme(isLight ? 'light' : 'dark')
+      } catch (err) {
+        console.error("Error in theme observer:", err)
+      }
+    }
+
+    window.addEventListener('scroll', handleTheme, { passive: true })
+    window.addEventListener('resize', handleTheme)
+    handleTheme() // Initial run
+
+    return () => {
+      window.removeEventListener('scroll', handleTheme)
+      window.removeEventListener('resize', handleTheme)
+    }
+  }, [])
+
   return (
     <nav
       style={{
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         left: 0,
         right: 0,
-        display: 'flex',
-        justifyContent: 'center',
         padding: '36px 36px',
-        zIndex: 20,
+        zIndex: 50,
         pointerEvents: 'none',
         ...style,
       }}
     >
       {/* Centre — AMATERASU */}
-      <div style={{ pointerEvents: 'auto' }}>
+      <div 
+        style={{ 
+          position: 'absolute', 
+          left: '50%', 
+          transform: 'translateX(-50%)', 
+          pointerEvents: 'auto',
+          marginTop: '6px'
+        }}
+      >
         <span
           style={{
             fontFamily: "'Inter', sans-serif",
-            fontWeight: 500,
-            fontSize: '11px',
+            fontWeight: 800,
+            fontSize: '16px',
             letterSpacing: '0.3em',
-            color: '#fff',
+            color: theme === 'light' ? '#4B3FC3' : '#fff',
+            transition: 'color 0.3s ease',
           }}
         >
           AMATERASU
         </span>
       </div>
 
-      {/* Right — VISION + Dot grid */}
+      {/* Right — VISION/MENU + Scroll Tracker + Dot Grid */}
       <div
         style={{
           position: 'absolute',
           right: '36px',
+          width: '280px',
           display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
+          flexDirection: 'column',
           pointerEvents: 'auto',
+          gap: '16px',
+          cursor: 'pointer',
+          marginTop: '6px'
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <span
-          style={{
-            fontFamily: "'Inter', sans-serif",
-            fontWeight: 500,
-            fontSize: '9px',
-            letterSpacing: '0.25em',
-            color: '#fff',
+        {/* Scroll Tracker Line */}
+        <div 
+          style={{ 
+            width: '100%', 
+            height: '1px', 
+            background: theme === 'light' ? 'rgba(75, 63, 195, 0.2)' : 'rgba(255,255,255,0.2)', 
+            position: 'relative',
+            transition: 'background 0.3s ease'
           }}
         >
-          VISION
-        </span>
+          <div style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            bottom: 0, 
+            width: `${scrollProgress * 100}%`, 
+            background: theme === 'light' ? '#4B3FC3' : '#fff',
+            transition: 'width 0.1s ease-out, background 0.3s ease'
+          }} />
+        </div>
 
-        {/* Separator Line */}
-        <div style={{ width: '40px', height: '1px', background: 'rgba(255,255,255,0.4)' }} />
+        {/* Vision and Grid at both ends */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <span
+            style={{
+              fontFamily: "'Inter', sans-serif",
+              fontWeight: 500,
+              fontSize: '10px',
+              letterSpacing: '0.25em',
+              color: theme === 'light' ? '#4B3FC3' : '#fff',
+              transition: 'color 0.3s ease, opacity 0.3s ease',
+            }}
+          >
+            {isHovered ? 'MENU' : 'VISION'}
+          </span>
 
-        {/* 3×3 Dot Grid Icon */}
-        <button
-          aria-label="Menu"
-          style={{
-            background: 'none',
-            border: 'none',
-            padding: 0,
-            cursor: 'pointer',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 3px)',
-            gridTemplateRows: 'repeat(3, 3px)',
-            gap: '3px',
-          }}
-        >
-          {Array.from({ length: 9 }).map((_, i) => (
-            <span
-              key={i}
-              style={{
-                display: 'block',
-                width: '3px',
-                height: '3px',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                borderRadius: '50%',
-              }}
-            />
-          ))}
-        </button>
+          {/* 3×3 Dot Grid Icon */}
+          <div
+            aria-label="Menu"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 3px)',
+              gridTemplateRows: 'repeat(3, 3px)',
+              gap: '4px',
+            }}
+          >
+            {Array.from({ length: 9 }).map((_, i) => {
+              // Indices for 3x3 grid:
+              // 0 1 2
+              // 3 4 5
+              // 6 7 8
+              // Dots to fade out for '5-dice' shape: 1, 3, 5, 7
+              const isFadeDot = i === 1 || i === 3 || i === 5 || i === 7;
+              return (
+                <span
+                  key={i}
+                  style={{
+                    display: 'block',
+                    width: '3px',
+                    height: '3px',
+                    backgroundColor: theme === 'light' ? 'rgba(75, 63, 195, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+                    borderRadius: '50%',
+                    opacity: isHovered && isFadeDot ? 0 : 1,
+                    transition: 'opacity 0.3s ease, background-color 0.3s ease',
+                  }}
+                />
+              )
+            })}
+          </div>
+        </div>
       </div>
     </nav>
   )

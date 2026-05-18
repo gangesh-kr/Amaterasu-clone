@@ -3,7 +3,6 @@ import gsap from 'gsap'
 import useScrollProgress from '../hooks/useScrollProgress.js'
 import useMouseParallax from '../hooks/useMouseParallax.js'
 import HeroCanvas from './HeroCanvas.jsx'
-import HeroNav from './HeroNav.jsx'
 import HeroHeadline from './HeroHeadline.jsx'
 import HeroCopy from './HeroCopy.jsx'
 import HeroAmbient from './HeroAmbient.jsx'
@@ -38,14 +37,13 @@ export default function HeroSection() {
   // Refs for DOM elements that animate with scroll (no re-renders)
   const headlineRef = useRef(null)
   const copyRef = useRef(null)
-  const navRef = useRef(null)
   const ambientRef = useRef(null)
   const rafRef = useRef(null)
 
   useEffect(() => {
     // Initial GSAP reveal
-    gsap.fromTo(headlineRef.current, 
-      { opacity: 0, y: 50 }, 
+    gsap.fromTo(headlineRef.current,
+      { opacity: 0, y: 50 },
       { opacity: 1, y: 0, duration: 1.5, ease: 'power3.out', delay: 0.2 }
     )
 
@@ -65,12 +63,6 @@ export default function HeroSection() {
         const copyOpacity = mapRange(p, 0.2, 0.8, 1, 0)
         copyRef.current.style.opacity = copyOpacity
         copyRef.current.style.transform = `translate3d(0px, 0px, 0)`
-      }
-
-      // Nav: stays visible, slightly reduces opacity at high scroll
-      if (navRef.current) {
-        const navOpacity = mapRange(p, 0.5, 1.0, 1, 0.4)
-        navRef.current.style.opacity = navOpacity
       }
 
       // Ambient: fade out gently
@@ -103,17 +95,12 @@ export default function HeroSection() {
       {/* z-index 0: Canvas */}
       <HeroCanvas scrollProgressRef={scrollProgressRef} mouseRef={mouseRef} />
 
-      {/* z-index 10: Nav */}
-      <div ref={navRef} style={{ willChange: 'opacity' }}>
-        <HeroNav />
-      </div>
-
       {/* z-index 10: Headline */}
-      <div ref={headlineRef} style={{ 
-        position: 'absolute', 
-        inset: 0, 
+      <div ref={headlineRef} style={{
+        position: 'absolute',
+        inset: 0,
         pointerEvents: 'none',
-        willChange: 'transform, opacity' 
+        willChange: 'transform, opacity'
       }}>
         <HeroHeadline style={{ pointerEvents: 'auto' }} />
       </div>

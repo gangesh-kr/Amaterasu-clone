@@ -69,7 +69,7 @@ export default function HeroAmbient({ style }) {
           left: '56%',
           top: 0,
           bottom: 0,
-          width: '1px',
+          width: '2px',
           background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.08) 70%, rgba(255,255,255,0) 100%)',
           pointerEvents: 'none',
         }}

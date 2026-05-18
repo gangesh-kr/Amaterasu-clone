@@ -38,10 +38,13 @@ export default function HeroHeadline({ style }) {
       </h1>
 
       <button
-        className="cta-btn mt-10 md:mt-14 mr-0 lg:-ml-12"
+        className="cta-btn"
+        style={{
+          marginLeft: '20%',
+        }}
         id="cta-start-journey"
       >
-        <span className="inline-block w-[3px] h-[3px] rounded-full bg-white mr-[10px]" />
+        <div className="inline-block w-[5px] h-[5px] rounded-full bg-white mr-10" />
         START YOUR JOURNEY
       </button>
     </div>
