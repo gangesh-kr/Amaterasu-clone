@@ -9,7 +9,7 @@ export default function NatureSection() {
   const globeRef = useRef(null)
   const overlayBgRef = useRef(null)
   const contentRef = useRef(null)
-  
+
   // Refs for slide contents
   const slide1Ref = useRef(null)
   const slide2Ref = useRef(null)
@@ -25,7 +25,7 @@ export default function NatureSection() {
     if (!el) return
 
     const ctx = gsap.context(() => {
-      
+
       // 1. Initial Globe Swipe (Triggers as NatureSection enters bottom of viewport)
       // Sweeps the globe up while the VisionSection text is still on screen
       gsap.fromTo(globeRef.current,
@@ -122,11 +122,11 @@ export default function NatureSection() {
 
   return (
     <div id="nature-section" ref={containerRef} className="relative w-full h-screen overflow-hidden bg-[#ffffff] z-20">
-      
+
       {/* GSAP Curve Swipe (Globe) - EXACT USER MARKUP & STYLING */}
       <div
         ref={globeRef}
-        className="absolute top-[65vh] left-1/2 -translate-x-1/2 w-[200vw] md:w-[140vw] lg:w-[110vw] h-[200vw] md:h-[140vw] lg:h-[110vw] rounded-t-[50%] flex items-start justify-center overflow-hidden"
+        className="absolute top-[30vh] left-1/2 -translate-x-1/2 w-[200vw] md:w-[140vw] lg:w-[110vw] h-[200vw] md:h-[140vw] lg:h-[110vw] rounded-t-[50%] flex items-start justify-center overflow-hidden"
         style={{
           transformOrigin: 'top center',
           background: 'linear-gradient(180deg, #2D88A6 0%, #65C9D9 100%)',
@@ -156,7 +156,7 @@ export default function NatureSection() {
         </svg>
 
         {/* Dynamic deep-blue gradient overlay that fades in as the globe expands */}
-        <div 
+        <div
           id="nature-overlay-bg"
           ref={overlayBgRef}
           className="absolute inset-0 opacity-0 pointer-events-none"
@@ -168,13 +168,13 @@ export default function NatureSection() {
       </div>
 
       {/* Viewport Content Wrapper (sits above the sweeping globe background) */}
-      <div 
+      <div
         ref={contentRef}
         className="absolute top-0 left-0 w-full h-full flex items-center justify-between px-6 md:px-16 lg:px-32 z-10 pointer-events-none"
       >
-        
+
         {/* ---------------- SLIDE 1 ---------------- */}
-        <div 
+        <div
           ref={slide1Ref}
           className="absolute bottom-24 left-6 md:left-16 lg:left-32 max-w-2xl text-left flex flex-col items-start gap-8"
           style={{ willChange: 'opacity, transform, filter' }}
@@ -206,7 +206,7 @@ export default function NatureSection() {
 
 
         {/* ---------------- SLIDE 2 ---------------- */}
-        <div 
+        <div
           ref={slide2Ref}
           className="absolute bottom-24 left-6 md:left-16 lg:left-32 max-w-2xl text-left flex flex-col items-start gap-8"
           style={{ willChange: 'opacity, transform, filter' }}
@@ -243,7 +243,7 @@ export default function NatureSection() {
 
 
         {/* ---------------- SLIDE 3 ---------------- */}
-        <div 
+        <div
           ref={slide3Ref}
           className="absolute bottom-24 left-6 md:left-16 lg:left-32 max-w-2xl text-left flex flex-col items-start gap-8"
           style={{ willChange: 'opacity, transform, filter' }}

@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
 import Lenis from 'lenis'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 /**
  * Initialises Lenis smooth scroll and syncs it with GSAP's ticker.
@@ -22,6 +25,9 @@ export default function useSmoothScroll() {
 
     lenisRef.current = lenis
 
+    // Sync Lenis scroll with GSAP's ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update)
+
     // Sync Lenis scroll with GSAP ticker for unified animation frames
     gsap.ticker.add((time) => {
       lenis.raf(time * 1000) // Lenis expects ms, GSAP provides seconds
@@ -29,6 +35,7 @@ export default function useSmoothScroll() {
     gsap.ticker.lagSmoothing(0) // Disable GSAP lag smoothing for consistent frames
 
     return () => {
+      lenis.off('scroll', ScrollTrigger.update)
       gsap.ticker.remove(lenis.raf)
       lenis.destroy()
       lenisRef.current = null

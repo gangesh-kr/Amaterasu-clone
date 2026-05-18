@@ -29,7 +29,7 @@ function mapRange(value, inMin, inMax, outMin, outMax) {
  * to give the sticky hero room for scroll-driven animations.
  */
 export default function HeroSection() {
-  // The scroll distance for 0→1 progress: 1× viewport height so it dims nicely as VisionSection slides over
+  // The scroll distance for 0→1 progress: 2× viewport height so it dims nicely as VisionSection slides over
   const scrollDistance = typeof window !== 'undefined' ? window.innerHeight : 1000
   const scrollProgressRef = useScrollProgress(scrollDistance)
   const mouseRef = useMouseParallax(0.08)
