@@ -1,10 +1,38 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 
 /**
- * HeroAmbient — Decorative elements: scroll label, chevron button,
- * and ambient dots. (Circle cursor removed, as it's now an actual tracking cursor).
+ * HeroAmbient — Decorative elements: scroll label, sound toggle button,
+ * vertical decorative line, and ambient dots.
  */
 export default function HeroAmbient({ style }) {
+  const [soundActive, setSoundActive] = useState(false)
+  const waveRef = useRef(null)
+
+  // Animate the sound wave lines
+  useEffect(() => {
+    if (!waveRef.current) return
+    const lines = waveRef.current.querySelectorAll('.sound-line')
+    if (!soundActive) {
+      lines.forEach(line => {
+        line.style.transform = 'scaleY(0.15)'
+      })
+      return
+    }
+
+    // Randomized pulsing animation for each line
+    const intervals = []
+    lines.forEach((line, i) => {
+      const animate = () => {
+        const scale = 0.2 + Math.random() * 0.8
+        line.style.transform = `scaleY(${scale})`
+      }
+      animate()
+      intervals.push(setInterval(animate, 150 + i * 40))
+    })
+
+    return () => intervals.forEach(clearInterval)
+  }, [soundActive])
+
   return (
     <div
       style={{
@@ -37,40 +65,67 @@ export default function HeroAmbient({ style }) {
         <span style={{ transform: 'translateY(1px)' }}>↓</span>
       </div>
 
-      {/* Bottom-right: Chevron down button */}
+      {/* Bottom-right: Sound toggle button */}
       <button
-        className="chevron-btn"
-        aria-label="Scroll down"
+        aria-label={soundActive ? 'Mute sound' : 'Enable sound'}
         style={{
           position: 'absolute',
           bottom: '28px',
           right: '36px',
           pointerEvents: 'auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '52px',
+          height: '52px',
+          borderRadius: '50%',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          background: 'transparent',
+          cursor: 'pointer',
+          transition: 'border-color 300ms ease, transform 300ms ease',
         }}
-        onClick={() => {
-          window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })
-        }}
+        onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.7)'}
+        onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'}
+        onClick={() => setSoundActive(prev => !prev)}
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path
-            d="M4 6L8 10L12 6"
-            stroke="rgba(255,255,255,0.6)"
-            strokeWidth="1.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        {/* Sound wave bars */}
+        <div
+          ref={waveRef}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '2.5px',
+            height: '18px',
+          }}
+        >
+          {Array.from({ length: 5 }).map((_, i) => (
+            <span
+              key={i}
+              className="sound-line"
+              style={{
+                display: 'block',
+                width: '2px',
+                height: '100%',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                borderRadius: '1px',
+                transform: 'scaleY(0.15)',
+                transition: 'transform 0.15s ease',
+                transformOrigin: 'center center',
+              }}
+            />
+          ))}
+        </div>
       </button>
 
-      {/* Decorative vertical line */}
+      {/* Decorative vertical line — centered */}
       <div
         style={{
           position: 'absolute',
-          left: '56%',
+          left: '50%',
           top: 0,
           bottom: 0,
-          width: '2px',
-          background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.08) 70%, rgba(255,255,255,0) 100%)',
+          width: '1px',
+          background: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.06) 30%, rgba(255,255,255,0.06) 70%, rgba(255,255,255,0) 100%)',
           pointerEvents: 'none',
         }}
       />

@@ -28,6 +28,7 @@ export default function NatureSection() {
   const badge1Ref = useRef(null)
   const badge2Ref = useRef(null)
   const badge3Ref = useRef(null)
+  const scrollTrackRef = useRef(null)
 
   useEffect(() => {
     const el = containerRef.current
@@ -184,6 +185,32 @@ export default function NatureSection() {
       )
       // Hold Slide 3
       tl.to({}, { duration: 2.5 })
+
+      // --- Infinite Horizontal Scroll ---
+      const track = scrollTrackRef.current
+      let enterHandler, leaveHandler
+
+      if (track) {
+        const scrollTween = gsap.to(track, {
+          xPercent: -50,
+          ease: 'none',
+          duration: 35,
+          repeat: -1,
+        })
+
+        enterHandler = () => gsap.to(scrollTween, { timeScale: 0.2, duration: 0.8, ease: 'power2.out' })
+        leaveHandler = () => gsap.to(scrollTween, { timeScale: 1, duration: 0.8, ease: 'power2.out' })
+
+        track.addEventListener('mouseenter', enterHandler)
+        track.addEventListener('mouseleave', leaveHandler)
+      }
+
+      return () => {
+        if (track) {
+          track.removeEventListener('mouseenter', enterHandler)
+          track.removeEventListener('mouseleave', leaveHandler)
+        }
+      }
     }, containerRef)
 
     return () => ctx.revert()
@@ -302,26 +329,7 @@ export default function NatureSection() {
 
           {/* --- SLIDE 3 BACKGROUND (Interlocking Geometries & Radar Rings) --- */}
           <g ref={slide3GridRef} style={{ opacity: 0, willChange: 'opacity, transform' }}>
-            <circle cx="960" cy="540" r="550" fill="none" stroke="white" strokeWidth="0.5" strokeOpacity="0.4" />
-            <circle cx="1450" cy="540" r="450" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
-            <circle cx="470" cy="540" r="450" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
-            <path d="M 100,540 L 1820,540" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="4 4" strokeOpacity="0.3" />
-
-            {/* Badge 03 - Linked to Slide 3 (Bottom Center-Right) */}
-            <g ref={badge3Ref} style={{ transformOrigin: '1400px 720px' }}>
-              <circle cx="1400" cy="720" r="32" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.8" />
-              <circle cx="1400" cy="720" r="42" fill="none" stroke="white" strokeWidth="0.4" strokeDasharray="3 3" strokeOpacity="0.5" />
-              <circle cx="1400" cy="720" r="58" fill="none" stroke="white" strokeWidth="0.3" strokeOpacity="0.3" />
-              <text 
-                x="1400" 
-                y="724" 
-                textAnchor="middle" 
-                fill="white" 
-                style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: '800', letterSpacing: '0.05em', opacity: 0.8 }}
-              >
-                03
-              </text>
-            </g>
+            {/* Background removed to match the clean aesthetic of Slide 3 */}
           </g>
         </svg>
       </div>
@@ -418,33 +426,61 @@ export default function NatureSection() {
           </div>
         </div>
 
-        {/* Slide 3 Graphics overlay (Interlocking Assessment Circles) */}
-        <div ref={graphics3Ref} className="absolute right-6 lg:right-16 top-1/2 -translate-y-1/2 w-1/2 flex items-center justify-end" style={{ willChange: 'opacity, transform, filter' }}>
-          <div className="flex flex-row items-center gap-2 lg:gap-3 overflow-x-auto max-w-full">
-            {[
-              'RE-DO INITIAL ASSESSMENT',
-              'UNDERSTAND THE PATIENT',
-              'INITIAL ASSESSMENT',
-              'EVALUATION'
-            ].map((text, idx) => (
-              <React.Fragment key={idx}>
-                <div className="w-[100px] h-[100px] lg:w-[130px] lg:h-[130px] rounded-full border border-white/20 bg-white/[0.02] backdrop-blur-sm flex items-center justify-center p-3 text-center transition-all">
-                  <span className="text-[7px] lg:text-[8px] tracking-wider font-light text-white/80 leading-normal">
-                    {text}
-                  </span>
-                </div>
-                {idx < 3 && (
-                  <span className="text-white/30 text-xs font-light px-0.5">→</span>
-                )}
-              </React.Fragment>
-            ))}
+        {/* Slide 3 Graphics overlay (Timeline Assessment Circles) */}
+        <div ref={graphics3Ref} className="absolute inset-0 top-[40%] -translate-y-1/2 flex items-center justify-start pointer-events-none overflow-hidden pl-6 md:pl-16 lg:pl-32" style={{ willChange: 'opacity, transform, filter' }}>
+          
+          <div 
+            ref={scrollTrackRef}
+            className="flex flex-row items-center gap-6 lg:gap-12 min-w-max pr-6 lg:pr-12 pointer-events-auto"
+          >
+            {Array.from({ length: 12 }).map((_, i) => {
+              const idx = i % 4;
+              const texts = [
+                'DIAGNOSTIC',
+                'RE-DO INITIAL ASSESSMENT',
+                'UNDERSTAND THE PATIENT',
+                'INITIAL ASSESSMENT'
+              ];
+              const text = texts[idx];
+
+              return (
+                <React.Fragment key={i}>
+                  {/* Arrow */}
+                  <span className="text-white/40 text-lg font-light shrink-0">→</span>
+                  
+                  {/* Circle */}
+                  <div className={`relative shrink-0 w-[140px] h-[140px] lg:w-[220px] lg:h-[220px] rounded-full border border-white/20 bg-transparent flex items-center justify-center p-4 text-center ${idx === 0 ? 'opacity-40' : 'opacity-100'}`}>
+                    
+                    {/* Special intersecting circle for the 2nd item */}
+                    {idx === 1 && (
+                      <div className="absolute top-[6%] -left-[8%] lg:top-[8%] lg:-left-[6%] w-[45px] h-[45px] lg:w-[70px] lg:h-[70px] rounded-full border border-white/20 bg-transparent">
+                        {/* The "03" badge is positioned above this circle */}
+                        {i === 1 ? (
+                          <div ref={badge3Ref} className="absolute -top-6 lg:-top-8 left-1/2 -translate-x-1/2 text-[10px] lg:text-xs font-bold text-white tracking-widest opacity-0">
+                            03
+                          </div>
+                        ) : (
+                          <div className="absolute -top-6 lg:-top-8 left-1/2 -translate-x-1/2 text-[10px] lg:text-xs font-bold text-white tracking-widest opacity-70">
+                            03
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    <span className="text-[8px] lg:text-[10px] tracking-[0.2em] font-bold text-white leading-normal uppercase">
+                      {text}
+                    </span>
+                  </div>
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
 
         {/* Scrolling bottom-right chevron helper */}
         <div className="absolute bottom-8 right-6 md:right-16 lg:right-32 flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-white/60 hover:text-white hover:border-white/40 transition-colors pointer-events-auto cursor-pointer">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
           </svg>
         </div>
 

@@ -21,6 +21,7 @@ export default function useSmoothScroll() {
       smoothWheel: true,
       wheelMultiplier: 0.8,
       touchMultiplier: 1.5,
+      autoRaf: false, // We will manually sync it with GSAP ticker
     })
 
     lenisRef.current = lenis
@@ -29,14 +30,16 @@ export default function useSmoothScroll() {
     lenis.on('scroll', ScrollTrigger.update)
 
     // Sync Lenis scroll with GSAP ticker for unified animation frames
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000) // Lenis expects ms, GSAP provides seconds
-    })
-    gsap.ticker.lagSmoothing(0) // Disable GSAP lag smoothing for consistent frames
+    const update = (time) => {
+      lenis.raf(time * 1000)
+    }
+    
+    gsap.ticker.add(update)
+    gsap.ticker.lagSmoothing(0)
 
     return () => {
       lenis.off('scroll', ScrollTrigger.update)
-      gsap.ticker.remove(lenis.raf)
+      gsap.ticker.remove(update)
       lenis.destroy()
       lenisRef.current = null
     }

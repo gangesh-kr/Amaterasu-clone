@@ -13,26 +13,34 @@ export default function HeroNav({ style }) {
   const [theme, setTheme] = useState('dark') // 'light' (indigo-blue) or 'dark' (white)
   const progressBarRef = useRef(null)
 
-  // 1. Bulletproof GSAP ScrollTrigger-driven progress calculation
+  // 1. Bulletproof real-time scroll progress tracker that works perfectly with dynamic pins & heights
   useEffect(() => {
     const el = progressBarRef.current
     if (!el) return
 
-    const ctx = gsap.context(() => {
-      gsap.to(el, {
-        scaleX: 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: document.documentElement,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: true,
-          invalidateOnRefresh: true,
-        }
-      })
-    })
+    const updateProgress = () => {
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight
+      const progress = docHeight > 0 ? scrollTop / docHeight : 0
+      
+      // Directly manipulate the style transform to avoid state-triggering re-renders ( compositor fast-path )
+      el.style.transform = `scaleX(${Math.min(1, Math.max(0, progress))})`
+    }
 
-    return () => ctx.revert()
+    window.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('resize', updateProgress)
+    
+    // Run initially and set a staggered delay to capture Lenis and layout pinning offsets
+    updateProgress()
+    const t1 = setTimeout(updateProgress, 100)
+    const t2 = setTimeout(updateProgress, 1000)
+
+    return () => {
+      window.removeEventListener('scroll', updateProgress)
+      window.removeEventListener('resize', updateProgress)
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
   }, [])
 
   // 2. Navigation theme color switching based on scroll position

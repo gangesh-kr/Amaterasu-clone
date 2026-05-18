@@ -137,5 +137,5 @@ export default function HeroCanvas({ scrollProgressRef, mouseRef }) {
     }
   }, [handleResize, renderFrame])
 
-  return <canvas ref={canvasRef} className="canvas-fill" style={{ zIndex: 0 }} aria-hidden="true" />
+  return <canvas ref={canvasRef} className="canvas-fill" style={{ zIndex: 0, mixBlendMode: 'hard-light' }} aria-hidden="true" />
 }

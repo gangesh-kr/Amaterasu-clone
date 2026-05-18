@@ -1,13 +1,99 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import useScrollReveal from '../hooks/useScrollReveal.js'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 export default function AlephSection() {
   const headerRef = useScrollReveal({ y: 40 })
-  const bodyRef = useScrollReveal({ y: 40, delay: 0.15 })
+  const paragraphRef = useRef(null)
   const ctaRef = useScrollReveal({ y: 40, delay: 0.3 })
 
+  useEffect(() => {
+    const el = paragraphRef.current
+    if (!el) return
+
+    let ctx
+
+    const splitAndAnimate = () => {
+      // 1. Revert previous GSAP animations to avoid conflicts
+      if (ctx) ctx.revert()
+
+      // 2. Retrieve clean text from data-attribute or initial load
+      const originalText = el.getAttribute('data-original-text') || el.innerText
+      if (!el.getAttribute('data-original-text')) {
+        el.setAttribute('data-original-text', originalText)
+      }
+
+      // 3. Clear container and temporarily wrap every single word in an inline-block span to measure its y-coordinate
+      const words = originalText.split(' ')
+      el.innerHTML = words.map(w => `<span style="display: inline-block;">${w}</span>`).join(' ')
+
+      // 4. Group word spans by their vertical offsetTop
+      const spans = el.querySelectorAll('span')
+      const linesMap = {}
+      spans.forEach(span => {
+        const top = span.offsetTop
+        if (!linesMap[top]) {
+          linesMap[top] = []
+        }
+        linesMap[top].push(span)
+      })
+
+      // 5. Build final HTML where each line's words are grouped inside a line container (with overflow: hidden)
+      const lineKeys = Object.keys(linesMap).sort((a, b) => Number(a) - Number(b))
+      let newHtml = ''
+      
+      lineKeys.forEach(key => {
+        const lineWords = linesMap[key].map(span => span.outerHTML).join(' ')
+        newHtml += `
+          <div class="split-line-outer" style="overflow: hidden; display: block; margin-bottom: 2px;">
+            <div class="split-line-inner" style="display: block; transform: translate3d(0, 100%, 0); opacity: 0; will-change: transform, opacity;">
+              ${lineWords}
+            </div>
+          </div>
+        `
+      })
+
+      el.innerHTML = newHtml
+
+      // 6. Set up the GSAP ScrollTrigger timeline inside a clean context
+      ctx = gsap.context(() => {
+        const lineInners = el.querySelectorAll('.split-line-inner')
+        gsap.to(lineInners, {
+          y: '0%',
+          opacity: 1,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        })
+      }, el)
+    }
+
+    // Run splitting initial setup
+    splitAndAnimate()
+
+    // Add window resize handler to rebuild line wrapping dynamically & responsively
+    const handleResize = () => {
+      splitAndAnimate()
+    }
+    window.addEventListener('resize', handleResize)
+
+    // Cleanup resize listener and revert anims
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (ctx) ctx.revert()
+    }
+  }, [])
+
   return (
-    <section className="relative w-full min-h-screen bg-gradient-to-br from-[#FFFFFF] via-[#EAF5FC] to-[#BFE3F9] text-[#0A1846] pt-20 pb-36 sm:pb-44 md:pb-52 px-6 md:px-16 lg:px-24 xl:px-32 flex flex-col justify-between overflow-hidden z-10 border-t border-black/5">
+    <section className="relative w-full min-h-screen bg-gradient-to-br from-[#FFFFFF] via-[#EAF5FC] to-[#BFE3F9] text-[#0A1846] pt-20 pb-20 px-6 md:px-16 lg:px-24 xl:px-32 flex flex-col justify-center items-center gap-12 lg:gap-16 overflow-hidden z-10 border-t border-black/5">
       
       <div 
         className="absolute inset-0 bg-[#FFFFFF] pointer-events-none z-0" 
@@ -16,43 +102,8 @@ export default function AlephSection() {
         }}
       />
 
-      <style>{`
-        @keyframes alephAmbientFloat {
-          0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.6; }
-          50% { transform: translateY(-6px) rotate(3deg); opacity: 0.9; }
-        }
-      `}</style>
 
-      {/* 1. Top Header Bar (Matching Reference) */}
-      <div className="relative w-full z-10 flex justify-between items-center select-none pt-4">
-        {/* Ambient Dot & Ring (Top Left) */}
-        <div className="flex items-center gap-6">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#0A1846] shadow-[0_0_6px_rgba(10,24,70,0.15)]" />
-          <div 
-            className="w-7 h-7 rounded-full border border-[#0A1846]/10" 
-            style={{ animation: 'alephAmbientFloat 6s ease-in-out infinite' }}
-          />
-        </div>
-
-        {/* Right Side Info (Top Right) */}
-        <div className="flex items-center gap-6">
-          <div className="flex flex-col items-end">
-            <div className="w-20 h-[1.5px] bg-[#0A1846]/20 mb-2" />
-            <span className="text-[9px] font-bold tracking-[0.15em] uppercase text-[#0A1846]/70">
-              VISION
-            </span>
-          </div>
-          {/* 3x3 Grid of Dots */}
-          <div className="grid grid-cols-3 gap-[3px]">
-            {[...Array(9)].map((_, i) => (
-              <span key={i} className="w-[3px] h-[3px] rounded-full bg-[#0A1846]/50" />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Main Large Heading (Centered, Matching Reference) */}
-      <div className="relative z-10 w-full my-auto flex flex-col items-center py-12 ">
+      <div className="relative z-10 w-full flex flex-col items-center py-4">
         <h2 
           ref={headerRef}
           className="text-[44px] sm:text-[54px] md:text-[72px] font-light text-[#0A1846] tracking-[-0.03em] leading-[1.05] text-center select-none max-w-5xl antialiased"
@@ -64,7 +115,7 @@ export default function AlephSection() {
       </div>
 
       {/* 3. Description Block (Asymmetric, Placed on Center-Right, Matching Reference) */}
-      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 items-start">
         <div className="hidden lg:block lg:col-span-6" />
         
         <div className="col-span-12 lg:col-span-6 flex flex-col items-start max-w-lg lg:pl-8">
@@ -76,9 +127,9 @@ export default function AlephSection() {
             </span>
           </div>
 
-          {/* Paragraph */}
+          {/* Paragraph with custom responsive GSAP Line Split animation */}
           <p 
-            ref={bodyRef}
+            ref={paragraphRef}
             className="text-[15px] sm:text-[16px] md:text-[17px] leading-[1.6] font-normal text-[#2E3D7A] mb-8 select-none antialiased"
           >
             Aleph is a quantum algorithm in development which simulates mental health treatment approaches against the complex representation of your mental and cognitive predispositions. Aleph will cut down the average time to optimal treatment plans from months to seconds.

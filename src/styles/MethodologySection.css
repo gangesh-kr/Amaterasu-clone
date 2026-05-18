@@ -1,0 +1,552 @@
+/* ===== Methodology Section ===== */
+
+.methodology-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(
+    ellipse 120% 100% at 30% 20%,
+    #eaf4fb 0%,
+    #f0f6fb 30%,
+    #f5f8fc 50%,
+    #e8f2fa 80%,
+    #dcedf8 100%
+  );
+  z-index: 15;
+}
+
+/* Subtle luminous vignette glow on edges */
+.methodology-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 80% at 50% 50%,
+    transparent 40%,
+    rgba(180, 215, 240, 0.25) 100%
+  );
+  z-index: 0;
+}
+
+/* ===== Phase 1: Heading Layer ===== */
+.methodology-heading-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.methodology-top-label {
+  margin-top: clamp(40px, 5vh, 70px);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #1a1a5e;
+  user-select: none;
+}
+
+.methodology-main-heading {
+  margin-top: clamp(20px, 3vh, 50px);
+  font-family: 'Inter', Georgia, serif;
+  font-size: clamp(36px, 5.5vw, 72px);
+  font-weight: 300;
+  line-height: 1.1;
+  text-align: center;
+  color: #1a1a5e;
+  letter-spacing: -0.02em;
+  max-width: 700px;
+  padding: 0 24px;
+}
+
+/* ===== Frontier Technologies Text Block ===== */
+.methodology-frontier-block {
+  position: absolute;
+  right: 8%;
+  top: 38%;
+  max-width: 380px;
+  z-index: 6;
+}
+
+.methodology-frontier-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.methodology-frontier-label .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #1a1a5e;
+}
+
+.methodology-frontier-label span {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #1a1a5e;
+}
+
+.methodology-frontier-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: #1a1a5e;
+  opacity: 0.85;
+}
+
+/* ===== 3D Canvas Layer ===== */
+.methodology-canvas-wrapper {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+/* ===== SVG Curved Path ===== */
+.methodology-svg-path-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.methodology-bezier-path {
+  fill: none;
+  stroke: #9ab0c8;
+  stroke-width: 1;
+  opacity: 0.5;
+}
+
+.methodology-path-dot {
+  fill: #1a1a5e;
+  stroke: #c8d8e8;
+  stroke-width: 1.5;
+}
+
+.methodology-path-dot-ring {
+  fill: none;
+  stroke: #c8d8e8;
+  stroke-width: 0.8;
+  opacity: 0.5;
+}
+
+/* ===== Phase 3: Triforce Layout ===== */
+.methodology-triforce-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.methodology-triforce-container {
+  position: relative;
+  width: clamp(500px, 55vw, 750px);
+  height: clamp(450px, 50vw, 680px);
+  transform: scale(0.7);
+  transform-origin: center top;
+}
+
+/* Individual triangle wrapper */
+.triforce-triangle {
+  position: absolute;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: filter 0.4s ease;
+}
+
+.triforce-triangle:hover {
+  filter: drop-shadow(0 0 20px rgba(26, 26, 94, 0.15));
+}
+
+.triforce-triangle:hover .triforce-outline {
+  stroke: #1a1a5e;
+  stroke-opacity: 0.6;
+}
+
+/* Top triangle */
+.triforce-top {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%;
+  height: 52%;
+}
+
+/* Bottom-left triangle */
+.triforce-bottom-left {
+  bottom: 0;
+  left: 0;
+  width: 55%;
+  height: 52%;
+}
+
+/* Bottom-right triangle */
+.triforce-bottom-right {
+  bottom: 0;
+  right: 0;
+  width: 55%;
+  height: 52%;
+}
+
+.triforce-outline {
+  fill: none;
+  stroke: #8a9cb8;
+  stroke-width: 1;
+  stroke-opacity: 0.4;
+  transition: stroke 0.3s ease, stroke-opacity 0.3s ease;
+}
+
+.triforce-fill {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.triforce-hover-icon {
+  opacity: 0;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  transform: scale(0.8);
+  transform-origin: 150px 155px;
+}
+
+.triforce-triangle:hover .triforce-fill {
+  opacity: 1;
+}
+
+.triforce-triangle:hover .triforce-hover-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.triforce-triangle:hover .triforce-label-text,
+.triforce-triangle:hover .triforce-expand-btn {
+  color: #ffffff;
+}
+
+/* Triangle label text */
+.triforce-label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.triforce-top .triforce-label {
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.triforce-bottom-left .triforce-label {
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.triforce-bottom-right .triforce-label {
+  bottom: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.triforce-label-text {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #1a1a5e;
+  line-height: 1.4;
+}
+
+.triforce-label-text sup {
+  font-size: 8px;
+  vertical-align: super;
+  margin-left: 2px;
+  font-weight: 400;
+}
+
+.triforce-expand-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #1a1a5e;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.triforce-expand-btn:hover {
+  transform: scale(1.3);
+}
+
+/* ===== Detail Panel ===== */
+.methodology-detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.methodology-detail-overlay.active {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+.methodology-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(220, 230, 240, 0.6);
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+}
+
+.methodology-detail-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(400px, 45vw, 600px);
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -10px 0 60px rgba(26, 26, 94, 0.08);
+  padding: clamp(40px, 5vw, 80px);
+  padding-top: clamp(60px, 8vh, 100px);
+  transform: translateX(100%);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.methodology-detail-overlay.active .methodology-detail-panel {
+  transform: translateX(0);
+}
+
+.methodology-detail-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #c8d8e8;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #1a1a5e;
+  transition: all 0.3s ease;
+}
+
+.methodology-detail-close:hover {
+  background: #f0f4f8;
+  border-color: #1a1a5e;
+}
+
+.methodology-detail-number {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #1a1a5e;
+  opacity: 0.5;
+}
+
+.methodology-detail-title {
+  font-family: 'Inter', Georgia, serif;
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 300;
+  line-height: 1.2;
+  color: #1a1a5e;
+  letter-spacing: -0.02em;
+}
+
+.methodology-detail-body {
+  font-family: 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.8;
+  color: #1a1a5e;
+  opacity: 0.75;
+}
+
+/* ===== Navigation Elements ===== */
+.methodology-nav-vision {
+  position: absolute;
+  top: clamp(30px, 4vh, 60px);
+  right: clamp(24px, 3vw, 60px);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 10;
+}
+
+.methodology-nav-vision-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #1a1a5e;
+}
+
+.methodology-nav-vision-dots {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+
+.methodology-nav-vision-dots span {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #1a1a5e;
+  opacity: 0.4;
+}
+
+/* Scroll progress line */
+.methodology-nav-progress {
+  position: absolute;
+  top: clamp(70px, 9vh, 110px);
+  right: clamp(55px, 5vw, 90px);
+  width: 50px;
+  height: 2px;
+  background: #c8d8e8;
+  z-index: 10;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+.methodology-nav-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #1a1a5e;
+  border-radius: 1px;
+  transition: width 0.1s linear;
+}
+
+/* Chevron button */
+.methodology-chevron-btn {
+  position: absolute;
+  bottom: clamp(20px, 3vh, 40px);
+  right: clamp(24px, 3vw, 60px);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #c0cfe0;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1a1a5e;
+  z-index: 10;
+  pointer-events: auto;
+  transition: all 0.3s ease;
+}
+
+.methodology-chevron-btn:hover {
+  border-color: #1a1a5e;
+  background: rgba(26, 26, 94, 0.03);
+}
+
+/* Circle dot indicator */
+.methodology-dot-indicator {
+  position: absolute;
+  right: clamp(50px, 5.5vw, 95px);
+  z-index: 10;
+}
+
+.methodology-dot-indicator-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #c0cfe0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.methodology-dot-indicator-inner {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #1a1a5e;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1024px) {
+  .methodology-frontier-block {
+    right: 6%;
+    top: auto;
+    bottom: 12%;
+    max-width: 320px;
+  }
+
+  .methodology-triforce-container {
+    width: 90vw;
+    height: 80vw;
+  }
+
+  .triforce-label-text {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 768px) {
+  .methodology-main-heading {
+    font-size: clamp(28px, 8vw, 48px);
+  }
+
+  .methodology-frontier-block {
+    right: 5%;
+    max-width: 260px;
+  }
+
+  .methodology-frontier-text {
+    font-size: 13px;
+  }
+
+  .methodology-detail-panel {
+    width: 100%;
+  }
+
+  .methodology-triforce-container {
+    width: 95vw;
+    height: 85vw;
+  }
+
+  .triforce-label-text {
+    font-size: 8px;
+    letter-spacing: 0.1em;
+  }
+}

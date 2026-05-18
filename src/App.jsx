@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Preloader from './components/Preloader.jsx'
 import CustomCursor from './components/CustomCursor.jsx'
+import MeshGradient from './components/MeshGradient.jsx'
 import HeroSection from './components/HeroSection.jsx'
 import VisionSection from './components/VisionSection.jsx'
 import NatureSection from './components/NatureSection.jsx'
@@ -48,6 +49,7 @@ export default function App() {
       {/* Main App Container */}
       <div className={`transition-opacity duration-1000 ${showPreloader ? 'opacity-0 h-screen overflow-hidden' : 'opacity-100'}`}>
         <CustomCursor />
+        <MeshGradient />
         <HeroNav />
         <HeroSection />
         <VisionSection />

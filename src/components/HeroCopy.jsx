@@ -3,9 +3,12 @@ import React from 'react'
 export default function HeroCopy({ style }) {
   return (
     <div
-      className="absolute bottom-10 right-6 md:bottom-20 md:right-9 w-[200px] md:w-[240px] text-white/70 text-[10px] md:text-[11px] leading-[1.6] font-light"
+      className="absolute right-6 md:right-9 w-[200px] md:w-[210px] text-white/80 text-[12px] md:text-[14px] leading-[1.45] font-light"
       style={{
         fontFamily: "'Inter', sans-serif",
+        top: '50%',
+        transform: 'translateY(-50%)',
+        letterSpacing: '0.02em',
         ...style,
       }}
     >
