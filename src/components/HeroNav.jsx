@@ -1,27 +1,38 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 /**
  * HeroNav — Global fixed top navigation bar with scroll tracker and menu toggle.
  * Adapts its color (white/indigo-blue) dynamically based on active background theme.
  */
 export default function HeroNav({ style }) {
-  const [scrollProgress, setScrollProgress] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [theme, setTheme] = useState('dark') // 'light' (indigo-blue) or 'dark' (white)
+  const progressBarRef = useRef(null)
 
-  // 1. Independent and bulletproof scroll progress calculation
+  // 1. Bulletproof GSAP ScrollTrigger-driven progress calculation
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY || window.pageYOffset
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
-      const progress = maxScroll > 0 ? scrollY / maxScroll : 0
-      setScrollProgress(progress)
-    }
+    const el = progressBarRef.current
+    if (!el) return
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial run
+    const ctx = gsap.context(() => {
+      gsap.to(el, {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+          invalidateOnRefresh: true,
+        }
+      })
+    })
 
-    return () => window.removeEventListener('scroll', handleScroll)
+    return () => ctx.revert()
   }, [])
 
   // 2. Navigation theme color switching based on scroll position
@@ -134,15 +145,20 @@ export default function HeroNav({ style }) {
             transition: 'background 0.3s ease'
           }}
         >
-          <div style={{ 
-            position: 'absolute', 
-            top: 0, 
-            left: 0, 
-            bottom: 0, 
-            width: `${scrollProgress * 100}%`, 
-            background: theme === 'light' ? '#4B3FC3' : '#fff',
-            transition: 'width 0.1s ease-out, background 0.3s ease'
-          }} />
+          <div 
+            ref={progressBarRef}
+            style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0, 
+              bottom: 0, 
+              width: '100%', 
+              transform: 'scaleX(0)',
+              transformOrigin: 'left center',
+              background: theme === 'light' ? '#4B3FC3' : '#fff',
+              transition: 'background 0.3s ease'
+            }} 
+          />
         </div>
 
         {/* Vision and Grid at both ends */}

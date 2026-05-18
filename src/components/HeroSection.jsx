@@ -82,37 +82,49 @@ export default function HeroSection() {
   }, [scrollProgressRef])
 
   return (
-    <div
-      style={{
-        position: 'sticky',
-        top: 0,
-        width: '100vw',
-        height: '100vh',
-        overflow: 'hidden',
-        zIndex: 0, // Keep it behind the other sections
-      }}
-    >
-      {/* z-index 0: Canvas */}
-      <HeroCanvas scrollProgressRef={scrollProgressRef} mouseRef={mouseRef} />
+    <div style={{ height: '100vh', position: 'relative', width: '100%' }}>
+      <div
+        style={{
+          position: 'relative',
+          top: 0,
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          zIndex: 0, // Keep it behind the other sections
+        }}
+      >
+        {/* z-index 0: Canvas */}
+        <HeroCanvas scrollProgressRef={scrollProgressRef} mouseRef={mouseRef} />
 
-      {/* z-index 10: Headline */}
-      <div ref={headlineRef} style={{
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        willChange: 'transform, opacity'
-      }}>
-        <HeroHeadline style={{ pointerEvents: 'auto' }} />
-      </div>
+        {/* z-index 10: Headline */}
+        <div ref={headlineRef} style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          willChange: 'transform, opacity'
+        }}>
+          <HeroHeadline style={{ pointerEvents: 'auto' }} />
+        </div>
 
-      {/* z-index 10: Copy text — visible by default */}
-      <div ref={copyRef} style={{ willChange: 'opacity' }}>
-        <HeroCopy />
-      </div>
+        {/* z-index 10: Copy text — visible by default */}
+        <div ref={copyRef} style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          willChange: 'transform, opacity'
+        }}>
+          <HeroCopy style={{ pointerEvents: 'auto' }} />
+        </div>
 
-      {/* z-index 10: Ambient */}
-      <div ref={ambientRef} style={{ willChange: 'opacity' }}>
-        <HeroAmbient />
+        {/* z-index 10: Ambient */}
+        <div ref={ambientRef} style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          willChange: 'opacity'
+        }}>
+          <HeroAmbient style={{ pointerEvents: 'auto' }} />
+        </div>
       </div>
     </div>
   )

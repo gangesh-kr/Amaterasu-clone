@@ -20,6 +20,15 @@ export default function NatureSection() {
   const graphics2Ref = useRef(null)
   const graphics3Ref = useRef(null)
 
+  // Refs for dynamic background circles
+  const bgGridRef = useRef(null)
+  const slide1GridRef = useRef(null)
+  const slide2GridRef = useRef(null)
+  const slide3GridRef = useRef(null)
+  const badge1Ref = useRef(null)
+  const badge2Ref = useRef(null)
+  const badge3Ref = useRef(null)
+
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -41,7 +50,7 @@ export default function NatureSection() {
           ease: 'none',
           scrollTrigger: {
             trigger: el,
-            start: 'top bottom', // Start exactly when top of NatureSection enters bottom of viewport
+            start: 'top 50%', // Start exactly when top of NatureSection enters bottom of viewport
             end: 'top top',     // Complete exactly when top of NatureSection reaches top of viewport
             scrub: 1,
           }
@@ -60,18 +69,27 @@ export default function NatureSection() {
         }
       })
 
-      // Expand Globe to cover screen & fade in deep blue gradient overlay
+      // Expand Globe to cover screen (keeping its top curved dome boundary fully circular)
       tl.to(globeRef.current,
         {
           top: '0vh',
           width: '100vw',
           height: '100vh',
-          borderRadius: '0%',
-          marginTop: '0%',
           scale: 1.05,
+          marginTop: '0%',
           duration: 2.2,
           ease: 'power2.inOut'
         }
+      )
+
+      // Start the flattening animation toward the end of the swipe up, so it is fully covered before losing the curve!
+      tl.to(globeRef.current,
+        {
+          borderRadius: '0%',
+          duration: 0.9,
+          ease: 'power2.out'
+        },
+        '<1.3' // Triggers 1.3s into the 2.2s swipe, executing in parallel to finish exactly at 2.2s!
       )
 
       tl.to(overlayBgRef.current,
@@ -83,35 +101,86 @@ export default function NatureSection() {
         '<' // Sync with the globe expansion
       )
 
+      // Slowly rotate Slide 1 grid on initial expand
+      tl.to(slide1GridRef.current,
+        {
+          rotation: 20,
+          scale: 1.05,
+          duration: 2.2,
+          ease: 'power2.inOut'
+        },
+        '<'
+      )
+
       // 3. Slide 1 Reveal (starts right as screen is covered)
       tl.fromTo([slide1Ref.current, graphics1Ref.current],
         { opacity: 0, y: 40, filter: 'blur(16px)' },
         { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' },
         '-=0.5'
       )
+      // Fade in Badge 01
+      tl.fromTo(badge1Ref.current,
+        { opacity: 0, scale: 0.9, y: 20 },
+        { opacity: 0.7, scale: 1, y: 0, duration: 1.2, ease: 'power2.out' },
+        '<'
+      )
+
       // Hold Slide 1
       tl.to({}, { duration: 2 })
-      // Fade out Slide 1
+
+      // Fade out Slide 1 & Slide 1 Grid, and rotate curves
       tl.to([slide1Ref.current, graphics1Ref.current],
         { opacity: 0, y: -40, filter: 'blur(16px)', duration: 1.2, ease: 'power2.in' }
       )
+      tl.to(slide1GridRef.current,
+        { opacity: 0, scale: 1.1, rotation: 40, duration: 1.2, ease: 'power2.in' },
+        '<'
+      )
 
-      // 4. Slide 2 Reveal
+      // 4. Slide 2 Reveal & Slide 2 Grid Fade in (the nested Concentric Vortex!)
       tl.fromTo([slide2Ref.current, graphics2Ref.current],
         { opacity: 0, y: 40, filter: 'blur(16px)' },
         { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' }
       )
+      tl.fromTo(slide2GridRef.current,
+        { opacity: 0, scale: 0.95, rotation: -10 },
+        { opacity: 1, scale: 1, rotation: 0, duration: 1.5, ease: 'power2.out' },
+        '<'
+      )
+      // Fade in Badge 02
+      tl.fromTo(badge2Ref.current,
+        { opacity: 0, scale: 0.9, y: 20 },
+        { opacity: 0.7, scale: 1, y: 0, duration: 1.2, ease: 'power2.out' },
+        '<'
+      )
+
       // Hold Slide 2
       tl.to({}, { duration: 2 })
-      // Fade out Slide 2
+
+      // Fade out Slide 2 & Slide 2 Grid, and rotate curves further
       tl.to([slide2Ref.current, graphics2Ref.current],
         { opacity: 0, y: -40, filter: 'blur(16px)', duration: 1.2, ease: 'power2.in' }
       )
+      tl.to(slide2GridRef.current,
+        { opacity: 0, scale: 1.08, rotation: 25, duration: 1.2, ease: 'power2.in' },
+        '<'
+      )
 
-      // 5. Slide 3 Reveal
+      // 5. Slide 3 Reveal & Slide 3 Grid Fade in!
       tl.fromTo([slide3Ref.current, graphics3Ref.current],
         { opacity: 0, y: 40, filter: 'blur(16px)' },
         { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.5, ease: 'power2.out' }
+      )
+      tl.fromTo(slide3GridRef.current,
+        { opacity: 0, scale: 0.95, rotation: -5 },
+        { opacity: 1, scale: 1, rotation: 0, duration: 1.5, ease: 'power2.out' },
+        '<'
+      )
+      // Fade in Badge 03
+      tl.fromTo(badge3Ref.current,
+        { opacity: 0, scale: 0.9, y: 20 },
+        { opacity: 0.7, scale: 1, y: 0, duration: 1.2, ease: 'power2.out' },
+        '<'
       )
       // Hold Slide 3
       tl.to({}, { duration: 2.5 })
@@ -135,25 +204,11 @@ export default function NatureSection() {
           zIndex: 0
         }}
       >
-        {/* Globe Grid Lines (SVG) - EXACT USER SVG */}
-        <svg
-          className="absolute top-0 left-0 w-full h-[50%] opacity-30 mix-blend-screen pointer-events-none"
-          viewBox="0 0 1000 500"
-          preserveAspectRatio="xMidYMin slice"
-        >
-          {/* Central-right vertical curve */}
-          <path d="M 550,0 Q 560,250 580,500" fill="none" stroke="white" strokeWidth="1.2" />
-          {/* Circle attached to central-right curve */}
-          <circle cx="555" cy="150" r="40" fill="none" stroke="white" strokeWidth="1.2" />
-
-          {/* Left curves */}
-          <path d="M 400,0 Q 200,200 0,400" fill="none" stroke="white" strokeWidth="1.2" />
-          <path d="M 450,0 Q 300,250 150,500" fill="none" stroke="white" strokeWidth="1.2" />
-
-          {/* Right curves */}
-          <path d="M 650,0 Q 800,200 1000,350" fill="none" stroke="white" strokeWidth="1.2" />
-          <path d="M 750,0 Q 900,150 1000,200" fill="none" stroke="white" strokeWidth="1.2" />
-        </svg>
+        {/* Layered concentric dome borders (Ripples/Texture) that flatten perfectly on expansion */}
+        <div className="absolute top-[2px] inset-x-[2px] bottom-[2px] rounded-t-[50%] border-t border-white/25 pointer-events-none mix-blend-screen will-change-[border-radius]" />
+        <div className="absolute top-[12px] inset-x-[12px] bottom-[12px] rounded-t-[50%] border-t border-white/15 pointer-events-none mix-blend-screen will-change-[border-radius]" />
+        <div className="absolute top-[24px] inset-x-[24px] bottom-[24px] rounded-t-[50%] border-t border-white/10 pointer-events-none mix-blend-screen will-change-[border-radius]" />
+        <div className="absolute top-[40px] inset-x-[40px] bottom-[40px] rounded-t-[50%] border-t border-white/5 pointer-events-none mix-blend-screen will-change-[border-radius]" />
 
         {/* Dynamic deep-blue gradient overlay that fades in as the globe expands */}
         <div
@@ -165,6 +220,110 @@ export default function NatureSection() {
             willChange: 'opacity'
           }}
         />
+
+        {/* Dynamic Widescreen Vector Grid Lines & Scrolling Circles (Texture + Scroll Tracking) */}
+        <svg
+          ref={bgGridRef}
+          className="absolute inset-0 w-full h-full pointer-events-none opacity-20 mix-blend-screen"
+          viewBox="0 0 1920 1080"
+          preserveAspectRatio="xMidYMid slice"
+          style={{ willChange: 'transform, opacity' }}
+        >
+          {/* --- SLIDE 1 BACKGROUND (Sweeping Editorial Curves & Badge 01) --- */}
+          <g ref={slide1GridRef} style={{ willChange: 'opacity, transform' }}>
+            {/* Concentric planetary orbit lines */}
+            <circle cx="960" cy="540" r="600" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.7" />
+            <circle cx="960" cy="540" r="450" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="3 3" strokeOpacity="0.5" />
+            <circle cx="960" cy="540" r="300" fill="none" stroke="white" strokeWidth="0.4" strokeOpacity="0.4" />
+            <circle cx="960" cy="540" r="750" fill="none" stroke="white" strokeWidth="0.3" strokeOpacity="0.3" />
+
+            {/* Intersecting curves matching high-end editorial vectors */}
+            <circle cx="1350" cy="420" r="380" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.6" />
+            <circle cx="580" cy="620" r="420" fill="none" stroke="white" strokeWidth="0.5" strokeOpacity="0.5" />
+            <circle cx="1600" cy="800" r="500" fill="none" stroke="white" strokeWidth="0.4" strokeDasharray="4 4" strokeOpacity="0.4" />
+
+            {/* Sweeping parabolic arcs across the horizon */}
+            <path d="M -100,540 Q 960,-200 2020,540" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.6" />
+            <path d="M -100,540 Q 960,1280 2020,540" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.6" />
+            <path d="M 960,-100 Q 300,540 960,1180" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
+            <path d="M 960,-100 Q 1620,540 960,1180" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
+
+            {/* Badge 01 - Linked to Slide 1 (Right Side) */}
+            <g ref={badge1Ref} style={{ transformOrigin: '1500px 520px' }}>
+              <circle cx="1500" cy="520" r="32" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.8" />
+              <circle cx="1500" cy="520" r="42" fill="none" stroke="white" strokeWidth="0.4" strokeDasharray="3 3" strokeOpacity="0.5" />
+              <circle cx="1500" cy="520" r="58" fill="none" stroke="white" strokeWidth="0.3" strokeOpacity="0.3" />
+              <text 
+                x="1500" 
+                y="524" 
+                textAnchor="middle" 
+                fill="white" 
+                style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: '800', letterSpacing: '0.05em', opacity: 0.8 }}
+              >
+                01
+              </text>
+            </g>
+          </g>
+
+          {/* --- SLIDE 2 BACKGROUND (Concentric Tunnel Vortex / Depth Spiral) --- */}
+          <g ref={slide2GridRef} style={{ opacity: 0, willChange: 'opacity, transform' }}>
+            {/* Concentric planetary rings scaling down dynamically, offset right to represent depth */}
+            <circle cx="1200" cy="540" r="1000" fill="none" stroke="white" strokeWidth="0.4" strokeOpacity="0.3" />
+            <circle cx="1200" cy="540" r="820" fill="none" stroke="white" strokeWidth="0.5" strokeOpacity="0.4" />
+            <circle cx="1200" cy="540" r="660" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" strokeDasharray="4 4" />
+            <circle cx="1200" cy="540" r="520" fill="none" stroke="white" strokeWidth="0.7" strokeOpacity="0.6" />
+            <circle cx="1200" cy="540" r="400" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.7" />
+            <circle cx="1200" cy="540" r="300" fill="none" stroke="white" strokeWidth="0.9" strokeOpacity="0.8" />
+            <circle cx="1200" cy="540" r="210" fill="none" stroke="white" strokeWidth="1.1" strokeOpacity="0.9" strokeDasharray="3 3" />
+            <circle cx="1200" cy="540" r="135" fill="none" stroke="white" strokeWidth="1.3" strokeOpacity="1" />
+            <circle cx="1200" cy="540" r="75" fill="none" stroke="white" strokeWidth="1.5" strokeOpacity="1" />
+            <circle cx="1200" cy="540" r="30" fill="none" stroke="white" strokeWidth="1.8" strokeOpacity="1" />
+
+            {/* Sweeping orbits intersecting the tunnel */}
+            <circle cx="600" cy="540" r="800" fill="none" stroke="white" strokeWidth="0.4" strokeOpacity="0.3" />
+            <path d="M 1200,-200 Q 800,540 1200,1280" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
+
+            {/* Badge 02 - Linked to Slide 2 (Top Left Side) */}
+            <g ref={badge2Ref} style={{ transformOrigin: '420px 380px' }}>
+              <circle cx="420" cy="380" r="32" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.8" />
+              <circle cx="420" cy="380" r="42" fill="none" stroke="white" strokeWidth="0.4" strokeDasharray="3 3" strokeOpacity="0.5" />
+              <circle cx="420" cy="380" r="58" fill="none" stroke="white" strokeWidth="0.3" strokeOpacity="0.3" />
+              <text 
+                x="420" 
+                y="384" 
+                textAnchor="middle" 
+                fill="white" 
+                style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: '800', letterSpacing: '0.05em', opacity: 0.8 }}
+              >
+                02
+              </text>
+            </g>
+          </g>
+
+          {/* --- SLIDE 3 BACKGROUND (Interlocking Geometries & Radar Rings) --- */}
+          <g ref={slide3GridRef} style={{ opacity: 0, willChange: 'opacity, transform' }}>
+            <circle cx="960" cy="540" r="550" fill="none" stroke="white" strokeWidth="0.5" strokeOpacity="0.4" />
+            <circle cx="1450" cy="540" r="450" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
+            <circle cx="470" cy="540" r="450" fill="none" stroke="white" strokeWidth="0.6" strokeOpacity="0.5" />
+            <path d="M 100,540 L 1820,540" fill="none" stroke="white" strokeWidth="0.5" strokeDasharray="4 4" strokeOpacity="0.3" />
+
+            {/* Badge 03 - Linked to Slide 3 (Bottom Center-Right) */}
+            <g ref={badge3Ref} style={{ transformOrigin: '1400px 720px' }}>
+              <circle cx="1400" cy="720" r="32" fill="none" stroke="white" strokeWidth="0.8" strokeOpacity="0.8" />
+              <circle cx="1400" cy="720" r="42" fill="none" stroke="white" strokeWidth="0.4" strokeDasharray="3 3" strokeOpacity="0.5" />
+              <circle cx="1400" cy="720" r="58" fill="none" stroke="white" strokeWidth="0.3" strokeOpacity="0.3" />
+              <text 
+                x="1400" 
+                y="724" 
+                textAnchor="middle" 
+                fill="white" 
+                style={{ fontFamily: "'Inter', sans-serif", fontSize: '11px', fontWeight: '800', letterSpacing: '0.05em', opacity: 0.8 }}
+              >
+                03
+              </text>
+            </g>
+          </g>
+        </svg>
       </div>
 
       {/* Viewport Content Wrapper (sits above the sweeping globe background) */}

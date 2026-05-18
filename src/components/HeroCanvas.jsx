@@ -92,7 +92,7 @@ export default function HeroCanvas({ scrollProgressRef, mouseRef }) {
 
     ctx.globalCompositeOperation = 'screen'
     const lightGrad = ctx.createRadialGradient(lightX, lightY, 0, lightX, lightY, lightRadius)
-    lightGrad.addColorStop(10, 'rgba(255, 255, 255, 0.35)')      // Bright white/sun core
+    lightGrad.addColorStop(0, 'rgba(255, 255, 255, 0.35)')
     lightGrad.addColorStop(0.15, 'rgba(120, 240, 255, 0.15)')   // Cyan glare
     lightGrad.addColorStop(0.5, 'rgba(0, 150, 255, 0.05)')      // Soft blue falloff
     lightGrad.addColorStop(1, 'rgba(0, 0, 0, 0)')
